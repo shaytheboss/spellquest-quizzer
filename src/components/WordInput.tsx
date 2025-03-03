@@ -40,10 +40,11 @@ const WordInput: React.FC<WordInputProps> = ({
   const checkAnswers = () => {
     const normalizedPresentInput = presentInput.trim().toLowerCase();
     const normalizedPastInput = pastInput.trim().toLowerCase();
-    const normalizedWord = currentWord.word.toLowerCase();
+    const normalizedPresentWord = currentWord.word.toLowerCase();
+    const normalizedPastWord = currentWord.pastTense.toLowerCase();
     
     // Check present tense
-    if (normalizedPresentInput === normalizedWord) {
+    if (normalizedPresentInput === normalizedPresentWord) {
       setPresentStatus('correct');
     } else {
       setPresentStatus('incorrect');
@@ -51,7 +52,7 @@ const WordInput: React.FC<WordInputProps> = ({
     }
     
     // Check past tense
-    if (normalizedPastInput === normalizedWord) {
+    if (normalizedPastInput === normalizedPastWord) {
       setPastStatus('correct');
     } else {
       setPastStatus('incorrect');
@@ -59,7 +60,7 @@ const WordInput: React.FC<WordInputProps> = ({
     }
     
     // Only proceed if both inputs are correct
-    if (normalizedPresentInput === normalizedWord && normalizedPastInput === normalizedWord) {
+    if (normalizedPresentInput === normalizedPresentWord && normalizedPastInput === normalizedPastWord) {
       setTimeout(() => {
         onCorrect();
       }, 1000);
@@ -95,6 +96,9 @@ const WordInput: React.FC<WordInputProps> = ({
     }
   };
 
+  // Update AudioButton to use present tense for pronunciation
+  const wordToSpeak = currentWord.word;
+
   return (
     <div className="animate-fade-in max-w-md mx-auto">
       <div className={cn(
@@ -106,7 +110,7 @@ const WordInput: React.FC<WordInputProps> = ({
           <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
             Word {currentWord.id}
           </span>
-          <AudioButton word={currentWord.word} />
+          <AudioButton word={wordToSpeak} />
         </div>
         
         <div className="space-y-4">

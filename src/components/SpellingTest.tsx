@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { spellingWords, SpellingWord } from '@/data/words';
 import WordInput from './WordInput';
 import TestResults from './TestResults';
 import { toast } from "sonner";
+import { RefreshCw } from 'lucide-react';
 
 const SpellingTest: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);

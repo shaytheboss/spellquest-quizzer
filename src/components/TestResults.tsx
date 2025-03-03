@@ -89,7 +89,7 @@ const TestResults: React.FC<TestResultsProps> = ({
                 <div key={word.id} className="py-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="font-medium">{word.word}</span>
+                      <span className="font-medium">{word.word} - {word.pastTense}</span>
                       <span className="text-sm text-muted-foreground ml-2">{word.hebrewTranslation}</span>
                     </div>
                     {isCorrect ? (
