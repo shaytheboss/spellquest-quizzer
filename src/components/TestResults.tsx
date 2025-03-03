@@ -1,19 +1,22 @@
 
 import React from 'react';
 import { SpellingWord } from '@/data/words';
+import { RefreshCw, Star } from 'lucide-react';
 
 interface TestResultsProps {
   words: SpellingWord[];
   correctAnswers: number[];
-  incorrectAttempts: Record<number, string[]>;
+  incorrectAttempts: Record<number, { present: string[], past: string[] }>;
   onRestart: () => void;
+  testCount: number;
 }
 
 const TestResults: React.FC<TestResultsProps> = ({
   words,
   correctAnswers,
   incorrectAttempts,
-  onRestart
+  onRestart,
+  testCount
 }) => {
   const score = correctAnswers.length;
   const totalWords = words.length;
@@ -68,16 +71,27 @@ const TestResults: React.FC<TestResultsProps> = ({
         </div>
         
         <div className="space-y-4 mb-6">
-          <h3 className="font-medium text-lg">Word Summary</h3>
+          <div className="flex justify-between items-center">
+            <h3 className="font-medium text-lg">Word Summary</h3>
+            <div className="flex items-center text-sm text-muted-foreground">
+              <span className="mr-1">Test #{testCount + 1}</span>
+              {percentage === 100 && (
+                <Star size={16} className="text-yellow-500 ml-1 fill-yellow-500" />
+              )}
+            </div>
+          </div>
           <div className="divide-y">
             {words.map((word) => {
               const isCorrect = correctAnswers.includes(word.id);
-              const attempts = incorrectAttempts[word.id] || [];
+              const attempts = incorrectAttempts[word.id] || { present: [], past: [] };
               
               return (
                 <div key={word.id} className="py-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium">{word.word}</span>
+                    <div>
+                      <span className="font-medium">{word.word}</span>
+                      <span className="text-sm text-muted-foreground ml-2">{word.hebrewTranslation}</span>
+                    </div>
                     {isCorrect ? (
                       <span className="text-green-500 flex items-center space-x-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -96,14 +110,29 @@ const TestResults: React.FC<TestResultsProps> = ({
                     )}
                   </div>
                   
-                  {attempts.length > 0 && (
-                    <div className="mt-1 text-sm text-muted-foreground">
-                      <span>Attempts: </span>
-                      {attempts.map((attempt, index) => (
-                        <span key={index} className="italic">
-                          {attempt}{index < attempts.length - 1 ? ', ' : ''}
-                        </span>
-                      ))}
+                  {(attempts.present.length > 0 || attempts.past.length > 0) && (
+                    <div className="mt-2 text-sm space-y-1">
+                      {attempts.present.length > 0 && (
+                        <div className="text-muted-foreground">
+                          <span className="font-medium text-xs">Present tense attempts: </span>
+                          {attempts.present.map((attempt, index) => (
+                            <span key={index} className="italic">
+                              {attempt}{index < attempts.present.length - 1 ? ', ' : ''}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {attempts.past.length > 0 && (
+                        <div className="text-muted-foreground">
+                          <span className="font-medium text-xs">Past tense attempts: </span>
+                          {attempts.past.map((attempt, index) => (
+                            <span key={index} className="italic">
+                              {attempt}{index < attempts.past.length - 1 ? ', ' : ''}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -114,11 +143,12 @@ const TestResults: React.FC<TestResultsProps> = ({
         
         <button
           onClick={onRestart}
-          className="w-full py-2 px-4 bg-primary text-white rounded-lg 
+          className="w-full py-2 px-4 flex items-center justify-center bg-primary text-white rounded-lg 
                    hover:bg-primary/90 transition-colors duration-300 font-medium
                    transform-gpu active:scale-[0.98]"
         >
-          Try Again
+          <RefreshCw size={16} className="mr-2" />
+          Start New Test
         </button>
       </div>
     </div>

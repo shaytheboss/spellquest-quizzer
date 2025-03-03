@@ -3,16 +3,22 @@ import React, { useState, useEffect } from 'react';
 import { spellingWords, SpellingWord } from '@/data/words';
 import WordInput from './WordInput';
 import TestResults from './TestResults';
+import { toast } from "sonner";
 
 const SpellingTest: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
-  const [incorrectAttempts, setIncorrectAttempts] = useState<Record<number, string[]>>({});
+  const [incorrectAttempts, setIncorrectAttempts] = useState<Record<number, { present: string[], past: string[] }>>({}); 
   const [isComplete, setIsComplete] = useState(false);
   const [words, setWords] = useState<SpellingWord[]>([]);
+  const [testCount, setTestCount] = useState(0); // Track number of tests taken
 
   // Initialize or reset the test
   useEffect(() => {
+    initializeTest();
+  }, [testCount]);
+
+  const initializeTest = () => {
     // Shuffle words and take the first 10 (or all if less than 10)
     const shuffled = [...spellingWords].sort(() => Math.random() - 0.5);
     const testWords = shuffled.slice(0, 10).map((word, index) => ({
@@ -25,11 +31,19 @@ const SpellingTest: React.FC = () => {
     setCorrectAnswers([]);
     setIncorrectAttempts({});
     setIsComplete(false);
-  }, []);
+    
+    toast("Test started! Listen to the word and type in both present and past tense.", {
+      position: "top-center",
+    });
+  };
 
   const handleCorrectAnswer = () => {
     const currentWord = words[currentIndex];
     setCorrectAnswers(prev => [...prev, currentWord.id]);
+    
+    toast.success("Correct! Good job!", {
+      position: "top-center",
+    });
     
     // Move to next word or complete test
     if (currentIndex < words.length - 1) {
@@ -39,31 +53,35 @@ const SpellingTest: React.FC = () => {
     } else {
       setTimeout(() => {
         setIsComplete(true);
+        toast("Test completed! Check your results.", {
+          position: "top-center",
+        });
       }, 500);
     }
   };
 
-  const handleIncorrectAnswer = (attempt: string) => {
+  const handleIncorrectAnswer = (attempt: string, tenseType: 'present' | 'past') => {
     const currentWord = words[currentIndex];
-    setIncorrectAttempts(prev => ({
-      ...prev,
-      [currentWord.id]: [...(prev[currentWord.id] || []), attempt]
-    }));
+    
+    setIncorrectAttempts(prev => {
+      const wordAttempts = prev[currentWord.id] || { present: [], past: [] };
+      
+      return {
+        ...prev,
+        [currentWord.id]: {
+          ...wordAttempts,
+          [tenseType]: [...wordAttempts[tenseType], attempt]
+        }
+      };
+    });
+    
+    toast.error(`Incorrect ${tenseType} tense. Try again!`, {
+      position: "top-center",
+    });
   };
 
   const handleRestart = () => {
-    // Shuffle words and take the first 10 (or all if less than 10)
-    const shuffled = [...spellingWords].sort(() => Math.random() - 0.5);
-    const testWords = shuffled.slice(0, 10).map((word, index) => ({
-      ...word,
-      id: index + 1 // Re-index to keep sequential ids
-    }));
-    
-    setWords(testWords);
-    setCurrentIndex(0);
-    setCorrectAnswers([]);
-    setIncorrectAttempts({});
-    setIsComplete(false);
+    setTestCount(prev => prev + 1); // Increment to trigger useEffect
   };
 
   if (words.length === 0) {
@@ -90,6 +108,7 @@ const SpellingTest: React.FC = () => {
         correctAnswers={correctAnswers}
         incorrectAttempts={incorrectAttempts}
         onRestart={handleRestart}
+        testCount={testCount}
       />
     );
   }
@@ -108,6 +127,15 @@ const SpellingTest: React.FC = () => {
             style={{ width: `${((currentIndex + 1) / words.length) * 100}%` }}
           ></div>
         </div>
+        
+        <button 
+          onClick={handleRestart}
+          className="flex items-center justify-center p-2 text-sm text-primary hover:text-primary/80"
+          title="Restart Test"
+        >
+          <RefreshCw size={16} className="mr-1" />
+          Restart
+        </button>
       </div>
       
       <WordInput 

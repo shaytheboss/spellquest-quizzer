@@ -1,9 +1,17 @@
 
 import React, { useState } from 'react';
 import SpellingTest from '@/components/SpellingTest';
+import { toast } from "sonner";
 
 const Index = () => {
   const [testStarted, setTestStarted] = useState(false);
+
+  const handleStartTest = () => {
+    setTestStarted(true);
+    toast("Welcome to SpellQuest! The Hebrew translation will guide you.", {
+      position: "top-center",
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -20,18 +28,18 @@ const Index = () => {
           <div className="max-w-xl mx-auto text-center animate-fade-in">
             <div className="mb-8">
               <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-3 animate-float">
-                Interactive Spelling Test
+                Hebrew-English Spelling Test
               </span>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-3">
                 Master Your Spelling
               </h1>
               <p className="text-lg text-muted-foreground mb-8">
-                Challenge yourself with our carefully curated list of commonly misspelled words. 
-                Listen to the pronunciation and type the correct spelling.
+                Challenge yourself with our Hebrew-English spelling test. 
+                See the Hebrew translation and type the English word in both present and past tense.
               </p>
 
               <button
-                onClick={() => setTestStarted(true)}
+                onClick={handleStartTest}
                 className="px-6 py-3 rounded-lg bg-primary text-white font-medium
                          hover:bg-primary/90 transition-all duration-300 shadow-sm
                          transform-gpu hover:-translate-y-0.5 active:translate-y-0"
@@ -48,9 +56,9 @@ const Index = () => {
                     1
                   </div>
                   <div>
-                    <h3 className="font-medium">Listen Carefully</h3>
+                    <h3 className="font-medium">See the Hebrew Translation</h3>
                     <p className="text-muted-foreground text-sm">
-                      Click the sound icon to hear the word's pronunciation.
+                      Each question shows a Hebrew word for you to translate to English.
                     </p>
                   </div>
                 </div>
@@ -60,9 +68,9 @@ const Index = () => {
                     2
                   </div>
                   <div>
-                    <h3 className="font-medium">Type Your Answer</h3>
+                    <h3 className="font-medium">Type in Present & Past Tense</h3>
                     <p className="text-muted-foreground text-sm">
-                      Spell the word correctly in the input box.
+                      Enter the correct English spelling in both present and past tense.
                     </p>
                   </div>
                 </div>
@@ -74,7 +82,7 @@ const Index = () => {
                   <div>
                     <h3 className="font-medium">Get Instant Feedback</h3>
                     <p className="text-muted-foreground text-sm">
-                      Receive immediate feedback on your spelling.
+                      Receive immediate feedback on your spelling for both tenses.
                     </p>
                   </div>
                 </div>
@@ -84,9 +92,9 @@ const Index = () => {
                     4
                   </div>
                   <div>
-                    <h3 className="font-medium">Track Progress</h3>
+                    <h3 className="font-medium">Track Your Progress</h3>
                     <p className="text-muted-foreground text-sm">
-                      Review your results and see where you can improve.
+                      See your results and track your improvement across multiple tests.
                     </p>
                   </div>
                 </div>
